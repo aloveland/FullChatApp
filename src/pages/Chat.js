@@ -1,30 +1,48 @@
 import React, { useState, useEffect } from 'react';
+import { Auth, Hub } from 'aws-amplify';
 
 const Chat = () => {
  const [recipients, setRecipients] = useState([]);
 
  useEffect(() => {
    const fetchRecipients = async () => {
-     try {
-       const response = await fetch('https://qrgoln7et8.execute-api.us-east-1.amazonaws.com/prod', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({ convoIds: ['123', '1234'], sender: 'ajlovelandwater@gmail.com' })
-       });
+     const session = await Auth.currentSession();
+     const user = session.getIdToken().payload.email;
+     console.log("user:", user);
+     try{
+        const getResponse = await fetch(`https://8lujstom26.execute-api.us-east-1.amazonaws.com/prod/${encodeURIComponent(user)}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+        const getData = await getResponse.json();
+        console.log("GET REQ, ", getData.convoIds);
+        try {
+               const response = await fetch('https://qrgoln7et8.execute-api.us-east-1.amazonaws.com/prod', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ convoIds: getData.convoIds, sender: user })
+               });
 
-       if (!response.ok) {
-         throw new Error(`HTTP error! status: ${response.status}`);
-       }
+               if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+               }
 
-       const data = await response.json();
+               const data = await response.json();
 
-       console.log("data is HERE", data);
-       setRecipients(data.recipients || []);
-     } catch (error) {
-       console.error('Error fetching recipients:', error);
-     }
+               console.log("data is HERE", data);
+               setRecipients(data.recipients || []);
+             } catch (error) {
+               console.error('Error fetching recipients:', error);
+             }
+     }catch (error) {
+             console.error('Error fetching recipients:', error);
+           }
+
+
    };
 
    fetchRecipients();
