@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Auth } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
+import { ChatContext } from './ChatContext';
 
 const Chat = () => {
   const [recipients, setRecipients] = useState([]);
   const navigate = useNavigate();
+  const { updateButtonIndex } = useContext(ChatContext);
 
   useEffect(() => {
     const fetchRecipients = async () => {
@@ -52,6 +54,7 @@ const Chat = () => {
     // handle logic for opening conversation here
     console.log(`Opening conversation with ${email}`);
     console.log(`Button index: ${index}`);
+    updateButtonIndex(index);
     navigate(`/Conversation/${encodeURIComponent(email)}`);
   };
 

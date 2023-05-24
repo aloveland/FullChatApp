@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import Conversation from './pages/Conversation';
+import { ChatProvider } from './pages/ChatContext';
 
 function App() {
   return (
@@ -11,11 +12,13 @@ function App() {
         <h1 style={{ textAlign: 'center' }}>Demo Chat App</h1>
       </div>
       <Router>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/Chat" element={<Chat />} />
-          <Route path="/Conversation/:recipient" element={<Conversation />} />
-        </Routes>
+        <ChatProvider>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/Chat" element={<Chat />} />
+            <Route path="/Conversation/:recipient" element={<Conversation />} />
+          </Routes>
+        </ChatProvider>
       </Router>
     </div>
   );
