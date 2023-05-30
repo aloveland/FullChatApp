@@ -11,6 +11,7 @@ const Conversation = () => {
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState('');
   const chatBoxRef = useRef(null);
+  const [messageInput, setMessageInput] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +48,18 @@ const Conversation = () => {
     fetchData();
   }, [buttonIndex]);
 
+  const handleInputChange = (event) => {
+    setMessageInput(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    // Handle sending the message logic here
+    console.log(`Sending message: ${messageInput}`);
+
+    // Clear the message input
+    setMessageInput('');
+  };
+
   return (
     <div>
       <h2>Conversation with {recipient}</h2>
@@ -56,6 +69,17 @@ const Conversation = () => {
             <div className="message-content">{message.message}</div>
           </div>
         ))}
+      </div>
+      <div className="input-container">
+        <input
+          type="text"
+          className="message-input"
+          placeholder="Type your message..."
+          style={{ width: 'calc(100% - 53px)' }}
+          value={messageInput}
+          onChange={handleInputChange}
+        />
+        <button className="send-button" onClick={handleSendMessage}>Send</button>
       </div>
     </div>
   );
