@@ -5,6 +5,7 @@ import { ChatContext } from './ChatContext';
 
 const Chat = () => {
   const [recipients, setRecipients] = useState([]);
+  const [newConversation, setNewConversation] = useState(false);
   const navigate = useNavigate();
   const { updateButtonIndex } = useContext(ChatContext);
 
@@ -47,8 +48,10 @@ const Chat = () => {
       }
     };
 
-    fetchRecipients();
-  }, []);
+    if (!newConversation) {
+      fetchRecipients();
+    }
+  }, [newConversation]);
 
   const handleConversationClick = (email, index) => {
     // handle logic for opening conversation here
@@ -58,12 +61,19 @@ const Chat = () => {
     navigate(`/Conversation/${encodeURIComponent(email)}`);
   };
 
+  const handleStartNewConversation = () => {
+    // handle logic for starting a new conversation here
+    console.log('Starting new conversation');
+    setNewConversation(true);
+  };
+
   const chatContainerStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
+    minHeight: '50vh',
+    paddingTop: '20px',
   };
 
   const conversationBoxStyle = {
@@ -89,8 +99,33 @@ const Chat = () => {
     transitionDuration: '0.4s',
   };
 
+  if (newConversation) {
+    return (
+      <div style={chatContainerStyle}>
+        <h2>Enter recipient email</h2>
+        <input type="text" />
+        <button
+          style={buttonStyle}
+          onClick={handleStartNewConversation}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#4CAF50')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = '#008CBA')}
+        >
+          Start New Conversation
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div style={chatContainerStyle}>
+      <button
+        style={buttonStyle}
+        onClick={handleStartNewConversation}
+        onMouseOver={(e) => (e.target.style.backgroundColor = '#4CAF50')}
+        onMouseOut={(e) => (e.target.style.backgroundColor = '#008CBA')}
+      >
+        Start New Conversation
+      </button>
       {recipients.map((email, index) => (
         <div key={index} style={conversationBoxStyle}>
           <button
